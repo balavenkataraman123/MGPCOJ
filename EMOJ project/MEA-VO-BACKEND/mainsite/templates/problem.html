@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+
+<h2>{{ problem.title }}</h2>
+<h3>{{ problem.xpvalue }} Points</h3>
+{{probmdt|safe}}
+
+
+{%if user.is_authenticated and status == 'unsolved' and not user.is_superuser%}
+<textarea class="form-control w-50" id='answer' type="text" name="answer" placeholder="your answer"></textarea>
+<br>
+<button class="btn btn-primary" onclick='submit()'> Submit </button>
+{%elif status == 'solved' or status == 'solved-archive'%}
+you have already solved this
+{%elif status == 'unsolved-archive'%}
+This problem has expired, but you can attempt it for practice
+{%elif not user.is_authenticated%}
+You need to log in to attempt this question
+{%elif user.is_superuser%}
+You cant get points by solving your own problem
+{%endif%}
+
+{%if solution%}
+    <div hidden='True' id='solution'>
+    {{solmdt|safe}}
+    </div>
+    <button id = 'but' onclick="showsol()"> Reveal Solution </button>
+
+{%endif%}
+{%if problem.category%}
+    <a href='/randomproblem/{{problem.category}}/{{problem.level}}'> View more problems like this </a>
+{%else%}
+    <a href='/randomproblem/e/{{problem.level}}'> View more problems like this </a>
+{%endif%}
+<script>
+function submit(){
+    r = new XMLHttpRequest();
+    r.open('POST', '/solveproblem/{{problem.id}}/');
+
+    r.onload = () => {
+        if (r.responseText == "correct") {
+            alert("Correct Answer!")
+            setTimeout(() => {location.replace("/getinfo/" + userid);}, 100);
+
+
+        }
+        else if (r.responseText == "wrong") {
+            alert("Not quite, but you still have another chance")
+            setTimeout(() => {location.replace("/getinfo/" + userid);}, 100);
+        }
+        else if (r.responseText == "bigwrong") {
+            alert("Incorrect")
+            setTimeout(() => {location.replace("/getinfo/" + userid);}, 100);
+        }
+    };
+
+    r.send(JSON.stringify({
+        "answer": document.getElementById('answer').value
+    }))
+}
+function showsol(){
+    document.getElementById('solution').hidden = false
+    document.getElementById('but').hidden = true
+
+}
+
+</script>
+
+{% endblock %}

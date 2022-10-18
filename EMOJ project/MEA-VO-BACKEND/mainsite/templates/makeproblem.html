@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form action="{% url 'makeproblem' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="title" placeholder="title">
+    </div>
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="questiontext" placeholder="question markdown file path">
+    </div>
+    <div class="form-group">
+        <input autofocus class="form-control" type="number" name="XPvalue" placeholder="points">
+    </div>
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="answer" placeholder="answer">
+    </div>
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="solutiontext" placeholder="solution markdown file">
+    </div>
+    <div class="form-group">
+    <p>release date and time</p>
+    <input type="datetime-local" name="release" value="2022-06-12T19:30">    
+    </div>
+    <div class="form-group">
+    <p> expiry date and time</p>
+    <input type="datetime-local" name="expiry" value="2022-06-12T19:30">    
+    </div>    
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+
+
+{% endblock %}
